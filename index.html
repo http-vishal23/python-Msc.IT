@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Todo App</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .form {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-top: 10px;
+            background: #f8f8f8;
+            border-radius: 5px;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        .actions a {
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .complete {
+            color: green;
+        }
+
+        .delete {
+            color: red;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📝 My Todo App</h1>
+
+    <!-- Add Todo Form -->
+
+    <form action="/add" method="POST" class="form">
+
+        <input
+            type="text"
+            name="task"
+            placeholder="Enter your task"
+            required
+        >
+
+        <button type="submit">
+            Add
+        </button>
+
+    </form>
+
+
+    <!-- Todo List -->
+
+    <ul>
+
+        {% for todo in todos %}
+
+        <li>
+
+            <span class="{% if todo['completed'] %}completed{% endif %}">
+                {{ todo['task'] }}
+            </span>
+
+            <div class="actions">
+
+                <a
+                    href="{{ url_for('complete_todo', id=todo['id']) }}"
+                    class="complete"
+                >
+                    {% if todo['completed'] %}
+                        Undo
+                    {% else %}
+                        Complete
+                    {% endif %}
+                </a>
+
+                <a
+                    href="{{ url_for('delete_todo', id=todo['id']) }}"
+                    class="delete"
+                >
+                    Delete
+                </a>
+
+            </div>
+
+        </li>
+
+        {% endfor %}
+
+    </ul>
+
+</div>
+
+</body>
+</html>
