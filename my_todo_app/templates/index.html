@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Flask Student App — CRUD with Database</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-card">
+        <!-- App Header -->
+        <header class="app-header">
+            <span class="header-badge">Flask + SQLite ORM</span>
+            <h1>🎓 Simple Student App</h1>
+            <p class="subtitle">Complete CRUD Demonstration for MSc (IT) Students</p>
+        </header>
+
+        <!-- Enrollment Summary / Counter -->
+        <div class="summary-container">
+            <div class="summary-info">
+                <span>Active Enrollment</span>
+                <strong>{{ active_count }} of {{ total }} students active</strong>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" style="width: {{ (active_count / total * 100) if total > 0 else 0 }}%;"></div>
+            </div>
+        </div>
+
+        <!-- 1. CREATE: Form to add a new student -->
+        <form action="{{ url_for('add_student') }}" method="POST" class="student-form">
+            <div class="form-inputs">
+                <input 
+                    type="text" 
+                    name="name" 
+                    placeholder="👤 Full Name (e.g. Aarav Sharma)" 
+                    required 
+                    autofocus
+                    class="form-input"
+                >
+                <input 
+                    type="text" 
+                    name="roll_no" 
+                    placeholder="🆔 Roll No (e.g. IT-101)" 
+                    required 
+                    class="form-input"
+                >
+                <input 
+                    type="text" 
+                    name="course" 
+                    placeholder="📚 Course (e.g. MSc IT)" 
+                    required 
+                    class="form-input"
+                >
+            </div>
+            <button type="submit" class="btn btn-add">➕ Add Student</button>
+        </form>
+
+        <!-- 2. READ: Student List -->
+        <div class="student-list">
+            {% if students %}
+                {% for student in students %}
+                    <div class="student-item {% if not student.is_active %}is-inactive{% endif %}">
+                        <div class="student-content">
+                            <!-- 3. UPDATE: Toggle status button -->
+                            <a href="{{ url_for('toggle_student', id=student.id) }}" class="toggle-btn" title="Click to toggle Active / Inactive">
+                                {% if student.is_active %}
+                                    <span class="check-icon checked">✓</span>
+                                {% else %}
+                                    <span class="check-icon unchecked"></span>
+                                {% endif %}
+                            </a>
+                            <div class="student-details">
+                                <div class="student-primary">
+                                    <span class="roll-badge">{{ student.roll_no }}</span>
+                                    <strong class="student-name">{{ student.name }}</strong>
+                                </div>
+                                <span class="student-course">{{ student.course }}</span>
+                            </div>
+                        </div>
+
+                        <div class="student-actions">
+                            <a href="{{ url_for('toggle_student', id=student.id) }}" class="status-badge-link" title="Click to toggle">
+                                <span class="status-badge {% if student.is_active %}status-active{% else %}status-inactive{% endif %}">
+                                    {{ "Active" if student.is_active else "Inactive" }}
+                                </span>
+                            </a>
+                            <!-- 4. DELETE: Remove student button -->
+                            <a href="{{ url_for('delete_student', id=student.id) }}" class="btn-delete" title="Delete student" onclick="return confirm('Delete {{ student.name }}?');">
+                                🗑️
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <span class="empty-icon">🎓</span>
+                    <h3>No students yet!</h3>
+                    <p>Enter details above and click <strong>Add Student</strong> to test your database.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Educational CRUD Cheat Sheet -->
+        <footer class="app-footer">
+            <h4>💡 How CRUD Works in this App:</h4>
+            <div class="crud-grid">
+                <div class="crud-item">
+                    <span class="crud-letter">C</span>
+                    <span class="crud-title">Create</span>
+                    <code>db.session.add(student)<br>db.session.commit()</code>
+                </div>
+                <div class="crud-item">
+                    <span class="crud-letter">R</span>
+                    <span class="crud-title">Read</span>
+                    <code>Student.query.all()</code>
+                </div>
+                <div class="crud-item">
+                    <span class="crud-letter">U</span>
+                    <span class="crud-title">Update</span>
+                    <code>student.is_active = not student.is_active<br>db.session.commit()</code>
+                </div>
+                <div class="crud-item">
+                    <span class="crud-letter">D</span>
+                    <span class="crud-title">Delete</span>
+                    <code>db.session.delete(student)<br>db.session.commit()</code>
+                </div>
+            </div>
+            <p class="footer-note">Database: <code>students.db</code> (SQLite) | Powered by Flask-SQLAlchemy</p>
+        </footer>
+    </div>
+</body>
+</html>
