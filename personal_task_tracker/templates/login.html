@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Login | Personal Task Tracker{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>તમારા એકાઉન્ટમાં Login કરો</h1>
+  <p class="muted">તમારા દૈનિક કાર્યો એક જ જગ્યાએ મેનેજ કરો.</p>
+  {% if registered %}<div class="success">Registration સફળ થયું. હવે Login કરો.</div>{% endif %}
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <form method="post" action="/login" class="stack">
+    <label>Username<input name="username" required minlength="3" autocomplete="username"></label>
+    <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+    <button class="btn primary" type="submit">Login</button>
+  </form>
+  <p class="muted">નવું એકાઉન્ટ છે? <a href="/register">Register કરો</a></p>
+</section>
+{% endblock %}

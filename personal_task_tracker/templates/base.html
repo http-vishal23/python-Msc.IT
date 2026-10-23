@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="gu" data-theme="{{ theme|default('light') }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Personal Task Tracker{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+</head>
+<body class="{{ theme|default('light') }}">
+  <header class="topbar">
+    <a class="brand" href="/">✓ Personal Task Tracker</a>
+    {% if user %}
+    <div class="top-actions">
+      <span>નમસ્તે, {{ user.username }}</span>
+      <form action="/preferences/theme" method="post" class="inline">
+        <input type="hidden" name="theme" value="{{ 'light' if theme == 'dark' else 'dark' }}">
+        <button class="btn secondary" type="submit">{{ 'Light' if theme == 'dark' else 'Dark' }} mode</button>
+      </form>
+      <form action="/logout" method="post" class="inline">
+        <button class="btn secondary" type="submit">Logout</button>
+      </form>
+    </div>
+    {% endif %}
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer>Personal Task Tracker · FastAPI + SQLite</footer>
+</body>
+</html>

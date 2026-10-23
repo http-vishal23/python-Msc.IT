@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Personal Task Tracker{% endblock %}
+{% block content %}
+<section class="welcome">
+  <div>
+    <p class="eyebrow">YOUR PERSONAL WORKSPACE</p>
+    <h1>તમારા કાર્યો</h1>
+    <p class="muted">નાનું પગલું પણ પ્રગતિ છે. આજનું કામ ગોઠવો.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><strong>{{ tasks|length }}</strong><span>કુલ કાર્યો</span></div>
+    <div class="stat"><strong>{{ tasks|selectattr('is_completed')|list|length }}</strong><span>પૂર્ણ</span></div>
+    <div class="stat"><strong>{{ tasks|rejectattr('is_completed')|list|length }}</strong><span>બાકી</span></div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>નવું Task ઉમેરો</h2>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <form action="/tasks" method="post" class="task-form">
+    <label>Task title<input name="title" placeholder="ઉદાહરણ: Python assignment પૂર્ણ કરવું" maxlength="150" required></label>
+    <label>Description (વૈકલ્પિક)<textarea name="description" rows="2" placeholder="Task વિશે થોડી વિગતો..."></textarea></label>
+    <button class="btn primary" type="submit">+ Task ઉમેરો</button>
+  </form>
+</section>
+
+<section class="task-section">
+  <h2>Task List</h2>
+  {% if tasks %}
+    <div class="task-list">
+    {% for task in tasks %}
+      <article class="task-card {% if task.is_completed %}completed{% endif %}">
+        <div class="task-main">
+          <h3>{{ task.title }}</h3>
+          {% if task.description %}<p>{{ task.description }}</p>{% endif %}
+          <small>બનાવ્યું: {{ task.created_at.strftime('%d-%m-%Y %H:%M') }}</small>
+          {% if task.completed_at %}<small> · પૂર્ણ: {{ task.completed_at.strftime('%d-%m-%Y %H:%M') }}</small>{% endif %}
+        </div>
+        <div class="task-actions">
+          <form action="/tasks/{{ task.id }}/toggle" method="post">
+            <button class="btn {{ 'secondary' if task.is_completed else 'success' }}" type="submit">
+              {{ 'ફરી બાકી કરો' if task.is_completed else 'પૂર્ણ કરો' }}
+            </button>
+          </form>
+          <form action="/tasks/{{ task.id }}/delete" method="post" onsubmit="return confirm('શું તમે આ task ડિલીટ કરવા માંગો છો?')">
+            <button class="btn danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </article>
+    {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty"><div class="empty-icon">✓</div><h3>હજુ કોઈ Task નથી</h3><p class="muted">ઉપરનું ફોર્મ વાપરીને તમારું પહેલું task ઉમેરો.</p></div>
+  {% endif %}
+</section>
+{% endblock %}
